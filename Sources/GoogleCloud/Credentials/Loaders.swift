@@ -38,18 +38,14 @@ extension GoogleServiceAccountCredentials {
         }
     }
     
-    /*
-    init(type: String, projectId: String, privateKeyId: String, privateKey: String, clientEmail: String, clientId: String, authUri: URL, tokenUri: URL, authProviderX509CertUrl: URL, clientX509CertUrl: URL) {
-        self.type = type
-        self.projectId = projectId
-        self.privateKeyId = privateKeyId
-        self.privateKey = privateKey
-        self.clientEmail = clientEmail
-        self.clientId = clientId
-        self.authUri = authUri
-        self.tokenUri = tokenUri
-        self.authProviderX509CertUrl = authProviderX509CertUrl
-        self.clientX509CertUrl = clientX509CertUrl
+    init(environmentVariable key: String) throws {
+        let decoder = JSONDecoder()
+        guard let rawString = ProcessInfo.processInfo.environment[key] else { throw CredentialLoadError.missingEnvironmentVariable }
+        
+        if let contents = rawString.data(using: .utf8) {
+            self = try decoder.decode(GoogleServiceAccountCredentials.self, from: contents)
+        } else {
+            throw CredentialLoadError.fileLoadError
+        }
     }
-    */
 }
